@@ -1,0 +1,16 @@
+
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+GET         /                     controllers.HomeController.index
+GET         /:id                  controllers.URLShortenerController.decode(id)
+POST        /:url                 controllers.URLShortenerController.shorten(url)
+
+
+#---------------
+ GET        /admin/metrics        com.kenshoo.play.metrics.MetricsController.metrics
+#----------------
+# Map static resources from the /public folder to the /assets URL path
+GET         /assets/*file         controllers.Assets.versioned(path="/public", file: Asset)
+
