@@ -4,8 +4,11 @@
 # ~~~~
 
 GET         /                     controllers.HomeController.index
+#GET         /api-docs             controllers.ApiHelpController.getResources
+#GET         /                     controllers.Default.redirect(to = "http://localhost:9000/assets/lib/swagger-ui/index.html?/url=http://localhost:9000/api-docs")
+
 GET         /:id                  controllers.URLShortenerController.decode(id)
-POST        /:url                 controllers.URLShortenerController.shorten(url)
+POST        /                     controllers.URLShortenerController.shorten
 
 
 #---------------
@@ -13,4 +16,5 @@ POST        /:url                 controllers.URLShortenerController.shorten(url
 #----------------
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file         controllers.Assets.versioned(path="/public", file: Asset)
+#GET         /assets/*file         controllers.Assets.at(path="/public", file)
 
