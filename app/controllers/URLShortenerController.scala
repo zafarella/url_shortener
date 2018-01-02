@@ -1,11 +1,13 @@
 package controllers
 
+import java.security.MessageDigest
 import java.util
-import java.util.Random
 import javax.inject._
+import javax.xml.bind.DatatypeConverter
 
 import akka.actor.ActorSystem
 import io.swagger.annotations.{Api, ApiOperation}
+import play.Logger
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future, Promise}
@@ -14,50 +16,57 @@ import scala.concurrent.{ExecutionContext, Future, Promise}
   * This is just initial
   */
 @Singleton
-@Api(value = "/shorten", description = "URL shortener")
+@Api(value = "/")
 class URLShortenerController @Inject()(cc: ControllerComponents, actorSystem: ActorSystem)(implicit exec: ExecutionContext)
   extends AbstractController(cc) {
 
   val urls: util.Map[String, String] = new util.HashMap[String, String]
-
-  val baseURL: String = "http://localhost/"
+  val baseURL: String = "http://localhost:9000/"
 
   /**
     */
-  @ApiOperation(value = "Shorten url in the POST body.",
-    notes = "",
-    httpMethod = "POST")
+  @ApiOperation(value = "Shorten url in the POST body.", notes = "", httpMethod = "POST")
   def shorten = Action.async {
     implicit request =>
-      getFutureShortenedURL(request.body.asText.getOrElse("")).map { msg => Ok(msg) }
+      val url = request.body.asText.getOrElse("")
+      if (!url.isEmpty)
+        getFutureShortenedURL(url).map { msg => Ok(msg) }
+      else
+        Future {
+          BadRequest
+        }
   }
 
-  private def getFutureShortenedURL(longUrl: String): Future[String] = {
-    val promise: Promise[String] = Promise[String]()
-    val r: Random = new Random
-    val shortened: String = baseURL + longUrl.hashCode
-    urls.put(shortened, longUrl)
-    promise.success(shortened)
-    promise.future
-  }
-
-  @ApiOperation(value = "Return long URL",
-    notes = "",
-    httpMethod = "GET")
+  @ApiOperation(value = "Return long URL", notes = "", httpMethod = "GET")
   def decode(url: String) = Action.async {
-    getFutureDecode(url).map { msg =>
-      msg match {
-        case "404" => NotFound(msg)
-        case _ => Ok(msg)
+    getFutureDecode(url).map { url =>
+      url match {
+        case "404" => NotFound(url)
+        case _ => Ok(url)
       }
     }
   }
 
-  private def getFutureDecode(url: String): Future[String] = {
+  def getFutureShortenedURL(longUrl: String): Future[String] = {
     val promise: Promise[String] = Promise[String]()
-    promise.success(
-      urls.getOrDefault(url, "404")
-    )
+    val msdDigest = MessageDigest.getInstance("SHA-1")
+    msdDigest.update(longUrl.getBytes("UTF-8"), 0, longUrl.length)
+    val shortHash = (DatatypeConverter.printHexBinary(msdDigest.digest)).substring(0, 7)
+    val shortened: String = baseURL + shortHash
+    urls.put(shortHash, longUrl)
+    Logger.debug("Long url = " + longUrl)
+    Logger.debug("Shortened = " + shortened)
+
+    promise.success(shortened)
+    promise.future
+  }
+
+  def getFutureDecode(url: String): Future[String] = {
+    val promise: Promise[String] = Promise[String]()
+    Logger.debug("URL for decode = " + url)
+    Logger.debug("Decoded long url = " + urls.getOrDefault(url, "404"))
+
+    promise.success(urls.getOrDefault(url, "404"))
     promise.future
   }
 }
