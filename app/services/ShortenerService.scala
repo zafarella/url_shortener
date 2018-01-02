@@ -8,11 +8,7 @@ import javax.inject._
 @Singleton
 class ShortenerService @Inject()() {
 
-  def shorten() = {
-    ???
-  }
 
-  def deShorten() = {
-    ???
-  }
+
+
 }
