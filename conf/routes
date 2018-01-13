@@ -4,17 +4,17 @@
 # ~~~~
 
 GET         /                     controllers.HomeController.index
-#GET         /api-docs             controllers.ApiHelpController.getResources
+GET          /api-docs             controllers.ApiHelpController.getResources
 #GET         /                     controllers.Default.redirect(to = "http://localhost:9000/assets/lib/swagger-ui/index.html?/url=http://localhost:9000/api-docs")
 
-GET         /:id                  controllers.URLShortenerController.decode(id)
+#GET         /decode/:id                  controllers.URLShortenerController.decode(id)
 POST        /                     controllers.URLShortenerController.shorten
 
 
 #---------------
- GET        /admin/metrics        com.kenshoo.play.metrics.MetricsController.metrics
+# GET        /admin/metrics        com.kenshoo.play.metrics.MetricsController.metrics
 #----------------
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file         controllers.Assets.versioned(path="/public", file: Asset)
-#GET         /assets/*file         controllers.Assets.at(path="/public", file)
+#GET         /assets/*file         controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file         controllers.Assets.at(path="/public", file)
 
