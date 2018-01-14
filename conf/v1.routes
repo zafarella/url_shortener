@@ -1,0 +1,3 @@
+GET         /api-json          controllers.ApiHelpController.getResources
+GET         /decode/:id        controllers.URLShortenerController.decode(id)
+POST        /                  controllers.URLShortenerController.shorten

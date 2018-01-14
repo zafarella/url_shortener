@@ -7,8 +7,4 @@ import javax.inject._
   */
 @Singleton
 class ShortenerService @Inject()() {
-
-
-
-
 }
