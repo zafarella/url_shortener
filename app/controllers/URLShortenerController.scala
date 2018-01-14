@@ -1,12 +1,13 @@
 package controllers
 
+import java.net.InetAddress
 import java.security.MessageDigest
 import java.util
 import javax.inject._
 import javax.xml.bind.DatatypeConverter
 
 import akka.actor.ActorSystem
-import io.swagger.annotations.{Api, ApiOperation}
+import io.swagger.annotations.{Api, ApiImplicitParam, ApiImplicitParams, ApiOperation}
 import play.Logger
 import play.api.mvc._
 
@@ -21,11 +22,12 @@ class URLShortenerController @Inject()(cc: ControllerComponents, actorSystem: Ac
   extends AbstractController(cc) {
 
   val urls: util.Map[String, String] = new util.HashMap[String, String]
-  val baseURL: String = "http://localhost:9000/"
+  val baseURL: String = s"http://${InetAddress.getLocalHost().getHostName()}:9000/"
 
-  /**
-    */
   @ApiOperation(value = "Shorten url in the POST body.", notes = "", httpMethod = "POST")
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "", required = true, paramType = "body", dataType = "string")
+  ))
   def shorten = Action.async {
     implicit request =>
       val url = request.body.asText.getOrElse("")

@@ -3,18 +3,10 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET         /                     controllers.HomeController.index
-GET          /api-docs             controllers.ApiHelpController.getResources
-#GET         /                     controllers.Default.redirect(to = "http://localhost:9000/assets/lib/swagger-ui/index.html?/url=http://localhost:9000/api-docs")
+#GET         /                     controllers.HomeController.index
+GET        /                     controllers.Default.redirect(to = "http://localhost:9000/assets/lib/swagger-ui/index.html?/url=http://localhost:9000/v1/api-json")
 
-#GET         /decode/:id                  controllers.URLShortenerController.decode(id)
-POST        /                     controllers.URLShortenerController.shorten
+GET        /admin/metrics        com.kenshoo.play.metrics.MetricsController.metrics
+GET        /assets/*file         controllers.Assets.at(path="/public", file)
 
-
-#---------------
-# GET        /admin/metrics        com.kenshoo.play.metrics.MetricsController.metrics
-#----------------
-# Map static resources from the /public folder to the /assets URL path
-#GET         /assets/*file         controllers.Assets.versioned(path="/public", file: Asset)
-GET         /assets/*file         controllers.Assets.at(path="/public", file)
-
+->        /v1 v1.Routes
