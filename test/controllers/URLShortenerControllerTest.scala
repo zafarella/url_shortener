@@ -26,7 +26,8 @@ class URLShortenerControllerTest extends PlaySpec with Results {
       try {
         var resultFuture = controller.shorten.apply(FakeRequest(POST, "/").withTextBody(beforeURL))
         encoded = contentAsString(resultFuture)
-        encoded mustNot be("")
+        System.out.println(encoded)
+        encoded must endWith("7743B6F")
       } finally {
         actorSystem.terminate()
       }

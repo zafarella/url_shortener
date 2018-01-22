@@ -1,13 +1,13 @@
 package controllers
 
-import java.net.InetAddress
+import java.net.{InetAddress, MalformedURLException, URL}
 import java.security.MessageDigest
 import java.util
 import javax.inject._
 import javax.xml.bind.DatatypeConverter
 
 import akka.actor.ActorSystem
-import io.swagger.annotations.{Api, ApiImplicitParam, ApiImplicitParams, ApiOperation}
+import io.swagger.annotations._
 import play.Logger
 import play.api.mvc._
 
@@ -17,30 +17,46 @@ import scala.concurrent.{ExecutionContext, Future, Promise}
   * This is just initial
   */
 @Singleton
-@Api(value = "/")
-class URLShortenerController @Inject()(cc: ControllerComponents, actorSystem: ActorSystem)(implicit exec: ExecutionContext)
+@Api
+class URLShortenerController @Inject()(cc: ControllerComponents, actorSystem: ActorSystem)
+                                      (implicit exec: ExecutionContext)
   extends AbstractController(cc) {
 
   val urls: util.Map[String, String] = new util.HashMap[String, String]
   val baseURL: String = s"http://${InetAddress.getLocalHost().getHostName()}:9000/"
 
-  @ApiOperation(value = "Shorten url in the POST body.", notes = "", httpMethod = "POST")
+  @ApiOperation(value = "Shorten URL in the POST body.", notes = "", httpMethod = "POST", response = classOf[String])
   @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "", required = true, paramType = "body", dataType = "string")
+    new ApiImplicitParam(name = "Long URL", required = true, paramType = "body", dataType = "string", defaultValue = "http://www.wikipedia.org")
   ))
-  def shorten = Action.async {
+  @ApiResponses(Array(
+    new ApiResponse(code = 404, message = "Not found"),
+    new ApiResponse(code = 405, message = "Validation exception"))
+  )
+  def shorten: Action[AnyContent] = Action.async {
     implicit request =>
-      val url = request.body.asText.getOrElse("")
-      if (!url.isEmpty)
-        getFutureShortenedURL(url).map { msg => Ok(msg) }
-      else
-        Future {
-          BadRequest
+      try {
+        val url = request.body.asText.getOrElse("")
+        new URL(url)
+        getShortenedURL(url).map {
+          msg => Ok(msg)
         }
+      }
+      catch {
+        case invalidURL: MalformedURLException =>
+          Future {
+            BadRequest
+          }
+      }
   }
 
   @ApiOperation(value = "Return long URL", notes = "", httpMethod = "GET")
-  def decode(url: String) = Action.async {
+  @ApiResponses(Array(
+    new ApiResponse(code = 400, message = "Invalid URL supplied"),
+    new ApiResponse(code = 405, message = "Validation exception"))
+  )
+  def decode(@ApiParam(value = "Short URL", required = true)
+             url: String): Action[AnyContent] = Action.async {
     getFutureDecode(url).map { url =>
       url match {
         case "404" => NotFound(url)
@@ -49,7 +65,7 @@ class URLShortenerController @Inject()(cc: ControllerComponents, actorSystem: Ac
     }
   }
 
-  def getFutureShortenedURL(longUrl: String): Future[String] = {
+  def getShortenedURL(longUrl: String): Future[String] = {
     val promise: Promise[String] = Promise[String]()
     val msdDigest = MessageDigest.getInstance("SHA-1")
     msdDigest.update(longUrl.getBytes("UTF-8"), 0, longUrl.length)
