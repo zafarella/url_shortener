@@ -1,3 +1,5 @@
 GET         /api-json          controllers.ApiHelpController.getResources
 GET         /decode/:id        controllers.URLShortenerController.decode(id)
+
++ nocsrf
 POST        /                  controllers.URLShortenerController.shorten
