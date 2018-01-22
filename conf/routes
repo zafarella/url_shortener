@@ -3,10 +3,10 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-#GET         /                     controllers.HomeController.index
-GET        /                     controllers.Default.redirect(to = "http://localhost:9000/assets/lib/swagger-ui/index.html?/url=http://localhost:9000/v1/api-json")
+GET        /                     controllers.HomeController.index
+GET        /docs                 controllers.HomeController.redirectToSwagger
 
 GET        /admin/metrics        com.kenshoo.play.metrics.MetricsController.metrics
 GET        /assets/*file         controllers.Assets.at(path="/public", file)
 
-->        /v1 v1.Routes
+->         /v1/                  v1.Routes
