@@ -25,7 +25,7 @@ class URLShortenerController @Inject()(cc: ControllerComponents, actorSystem: Ac
   val urls: util.Map[String, String] = new util.HashMap[String, String]
   val baseURL: String = s"http://${InetAddress.getLocalHost().getHostName()}:9000/"
 
-  @ApiOperation(value = "Shorten URL in the POST body.", notes = "", httpMethod = "POST", response = classOf[String])
+  @ApiOperation(value = "Shorten URL in the POST body.", notes = "", httpMethod = "POST", response = classOf[String], consumes = "text/plain")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "Long URL", required = true, paramType = "body", dataType = "string", defaultValue = "http://www.wikipedia.org")
   ))
