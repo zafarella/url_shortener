@@ -17,7 +17,7 @@ import scala.concurrent.{ExecutionContext, Future, Promise}
   * This is just initial
   */
 @Singleton
-@Api
+@Api("URL Shortener")
 class URLShortenerController @Inject()(cc: ControllerComponents, actorSystem: ActorSystem)
                                       (implicit exec: ExecutionContext)
   extends AbstractController(cc) {
@@ -25,9 +25,22 @@ class URLShortenerController @Inject()(cc: ControllerComponents, actorSystem: Ac
   val urls: util.Map[String, String] = new util.HashMap[String, String]
   val baseURL: String = s"http://${InetAddress.getLocalHost().getHostName()}:9000/"
 
-  @ApiOperation(value = "Shorten URL in the POST body.", notes = "", httpMethod = "POST", response = classOf[String], consumes = "text/plain")
+  @ApiOperation(value = "Shorten URL in the POST body.",
+    notes = "",
+    httpMethod = "POST",
+    response = classOf[String],
+    consumes = "text/plain")
   @ApiImplicitParams(Array(
-    new ApiImplicitParam(name = "Long URL", required = true, paramType = "body", dataType = "string", defaultValue = "http://www.wikipedia.org")
+    new ApiImplicitParam(
+      name = "Long URL",
+      required = true,
+      paramType = "body",
+      dataType = "String",
+      defaultValue = "http://www.wikipedia.org",
+      example = "http://www.wikipedia.org",
+      value = "http://www.wikipedia.org"
+    )
+
   ))
   @ApiResponses(Array(
     new ApiResponse(code = 404, message = "Not found"),
@@ -66,12 +79,16 @@ class URLShortenerController @Inject()(cc: ControllerComponents, actorSystem: Ac
   }
 
   def getShortenedURL(longUrl: String): Future[String] = {
+
     val promise: Promise[String] = Promise[String]()
     val msdDigest = MessageDigest.getInstance("SHA-1")
     msdDigest.update(longUrl.getBytes("UTF-8"), 0, longUrl.length)
-    val shortHash = (DatatypeConverter.printHexBinary(msdDigest.digest)).substring(0, 7)
-    val shortened: String = baseURL + shortHash
-    urls.put(shortHash, longUrl)
+
+    val shortened: String =
+      baseURL + DatatypeConverter.printHexBinary(msdDigest.digest).substring(0, 7)
+
+    urls.put(shortened, longUrl)
+
     Logger.debug("Long url = " + longUrl)
     Logger.debug("Shortened = " + shortened)
 
