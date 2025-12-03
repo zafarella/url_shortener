@@ -12,7 +12,8 @@
           with:
             distribution: 'temurin'
             java-version: '17'
-        - uses: sbt/setup-sbt@v2
+            cache: sbt
+        - uses: sbt/setup-sbt@v1
           with:
             sbt-version: 1.x
         - name: Compile and Test
