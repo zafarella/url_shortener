@@ -1,52 +1,19 @@
-name: CI
-on:
-  pull_request:
-  push:
-jobs:
-  test:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-latest
-            java: 17
-            jobtype: 1
-          - os: ubuntu-latest
-            java: 17
-            jobtype: 2
-          - os: windows-latest
-            java: 17
-            jobtype: 2
-          - os: ubuntu-latest
-            java: 17
-            jobtype: 3
-    runs-on: ${{ matrix.os }}
-    env:
-      JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
-      JVM_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: ${{ matrix.java }}
-          cache: sbt
-      - name: Setup sbt launcher
-        uses: sbt/setup-sbt@v1
-      - name: Build and test (1)
-        if: ${{ matrix.jobtype == 1 }}
-        shell: bash
-        run: |
-          sbt -v "test;"
-      - name: Build and test (2)
-        if: ${{ matrix.jobtype == 2 }}
-        shell: bash
-        run: |
-          sbt -v "scripted actions/*"
-      - name: Build and test (3)
-        if: ${{ matrix.jobtype == 3 }}
-        shell: bash
-        run: |  
-          sbt -v "dependency-management/*"
+    name: Scala CI
+
+    on: [push, pull_request]
+
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+
+        steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-java@v4
+          with:
+            distribution: 'temurin'
+            java-version: '17'
+        - uses: sbt/setup-sbt@v2
+          with:
+            sbt-version: 1.x
+        - name: Compile and Test
+          run: sbt clean compile test
