@@ -12,7 +12,7 @@ scalaVersion := "2.13.18"
 
 libraryDependencies ++= Seq(
 
-  "com.kenshoo" %% "metrics-play" % "2.7.0_0.8.0",
+  "com.kenshoo" %% "metrics-play" % "2.7.3_0.8.2",
 
   "org.webjars" %% "webjars-play" % "2.6.3",
   "org.webjars" % "swagger-ui" % "5.30.3",
