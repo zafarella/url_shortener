@@ -1,5 +1,5 @@
-GET         /api-json          controllers.ApiHelpController.getResources
-GET         /decode/:url        controllers.URLShortenerController.decode(url)
+#GET         /api-json          controllers.ApiHelpController.getResources
+GET          /decode/:url        controllers.URLShortenerController.decodeShortURL(url)
 
 + nocsrf
-POST        /                  controllers.URLShortenerController.shorten
+POST        /                  controllers.URLShortenerController.shortenURL
