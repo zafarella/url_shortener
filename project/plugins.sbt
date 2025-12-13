@@ -1,6 +1,5 @@
 logLevel := Level.Warn
 
-resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
-
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.9.9")
 //addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0")
+addSbtPlugin("io.github.play-swagger" % "sbt-play-swagger" % "1.7.0")
