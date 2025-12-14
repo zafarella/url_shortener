@@ -5,7 +5,6 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-java@v5
@@ -17,4 +16,6 @@ jobs:
         with:
           sbt-version: 1.x
       - name: Compile and Test
+        env:
+          JAVA_OPTS: "--add-modules jdk.incubator.vector"
         run: sbt clean compile test
