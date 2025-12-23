@@ -29,5 +29,7 @@ libraryDependencies ++= Seq(
 //  ehcache,
   ws, // keep uncommented - required by DI/Juice
   specs2 % Test,
-  guice
+  guice,
+
+  "io.github.bluuewhale" % "hashsmith" % "0.1.5"
 )
