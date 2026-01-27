@@ -1,5 +1,7 @@
 package controllers
 
+import io.github.bluuewhale.hashsmith.SwissMap
+
 import java.net.{InetAddress, MalformedURLException, URL}
 import java.security.MessageDigest
 import java.util
@@ -22,7 +24,7 @@ class URLShortenerController @Inject()(cc: ControllerComponents)
                                       (implicit exec: ExecutionContext)
   extends AbstractController(cc) {
 
-  val urls: util.Map[String, String] = new util.HashMap[String, String]
+  val urls: SwissMap[String, String] = new SwissMap[String, String]
   val baseURL: String = s"http://${InetAddress.getLocalHost.getHostName}:9000/"
 
   //  @ApiOperation(value = "Shorten URL in the POST body.",
