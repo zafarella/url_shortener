@@ -6,7 +6,7 @@ lazy val `urlshortener` =
   (project in file("."))
     .enablePlugins(PlayScala)
 
-scalaVersion := "2.13.18"
+scalaVersion := "3.8.2"
 val pekkoVersion = "1.4.0"
 
 libraryDependencies ++= Seq(
