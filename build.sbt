@@ -16,7 +16,7 @@ libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "3.0.10",
   "org.webjars" % "swagger-ui" % "5.32.5",
 
-  "commons-codec" % "commons-codec" % "1.22.0",
+  "commons-codec" % "commons-codec" % "1.22.1",
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.2" % Test,
 //
