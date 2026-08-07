@@ -3,6 +3,7 @@ package controllers
 import java.net.{InetAddress, MalformedURLException, URL}
 import java.security.MessageDigest
 import java.util
+import java.util.concurrent.Executors
 import javax.inject._
 
 //import javax.xml.bind.DatatypeConverter
@@ -13,17 +14,21 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future, Promise}
 
+
 /**
  * This is just initial
  */
 @Singleton
 //@Api("URL Shortener")
 class URLShortenerController @Inject()(cc: ControllerComponents)
-                                      (implicit exec: ExecutionContext)
+//                                      (implicit exec: ExecutionContext)
   extends AbstractController(cc) {
 
-  val urls: util.Map[String, String] = new util.HashMap[String, String]
-  val baseURL: String = s"http://${InetAddress.getLocalHost.getHostName}:9000/"
+  private val virtualThreadExecutor = Executors.newVirtualThreadPerTaskExecutor()
+  implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(virtualThreadExecutor)
+
+  private val urls: util.Map[String, String] = new util.HashMap[String, String]
+  private val baseURL: String = s"http://${InetAddress.getLocalHost.getHostName}:9000/"
 
   //  @ApiOperation(value = "Shorten URL in the POST body.",
   //    notes = "",
